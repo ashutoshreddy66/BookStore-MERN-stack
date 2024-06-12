@@ -1,4 +1,4 @@
-import express from "express";
+import express, { request, response } from "express";
 import { PORT } from "./config.js";
 import { mongoDBURL } from "./config.js";
 import mongoose from "mongoose";
@@ -14,7 +14,6 @@ app.get('/', (request, response) => {
 });
 
 //Route for saving a new book
-
 app.post('/books', async (request, response)=>{
     try{
         if(!request.body.title|| !request.body.author || !request.body.publishYear){
@@ -35,6 +34,7 @@ app.post('/books', async (request, response)=>{
     }
 });
 
+// get all books
 app.get('/books', async (request, response)=>{
     try {
         const books = await Book.find({});
@@ -57,6 +57,21 @@ app.get('/books/:id', async (request, response)=>{
     }
 });
 
+// update a book
+app.put('/books/:id', async (request, response) =>{
+    try {
+        if(!request.body.title|| !request.body.author || !request.body.publishYear){
+            return response.status(400).send({message : 'Send all required fields : title, author, publishyear'}); 
+        }
+        const {id} = request.params;
+        const result = await Book.findByIdAndUpdate(id, request.body);
+        if(!result) return response.status(404).send({message: 'Book not found!'});
+        return response.status(200).send({message: 'Book updated succesfully!'});
+        } catch (error) {
+       console.log(error.message);
+       response.status(500).send({message : error.message});
+    }
+})
 
 mongoose
     .connect(mongoDBURL)
