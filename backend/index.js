@@ -50,6 +50,7 @@ app.get('/books/:id', async (request, response)=>{
     try {
         const {id} = request.params;
         const book = await Book.findById(id);
+        if(!book) return response.status(404).send({message: "Book not found!"})
         return response.status(200).json(book)
     } catch (error) {
         console.log(error.message);
@@ -70,6 +71,22 @@ app.put('/books/:id', async (request, response) =>{
         } catch (error) {
        console.log(error.message);
        response.status(500).send({message : error.message});
+    }
+})
+
+// delete a book
+app.delete('/books/:id', async (request, response) =>{
+    try {
+        // if(!request.body.title|| !request.body.author || !request.body.publishYear){
+        //     return response.status(400).send({message : 'Send all required fields : title, author, publishyear'}); 
+        // }
+        const {id} = request.params;
+        const result = await Book.findByIdAndDelete(id);
+        if(!result) return response.status(404).send({message: 'Book not found!'});
+        return response.status(200).send({message: 'Book deleted succesfully!'});
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({message : error.message});
     }
 })
 
