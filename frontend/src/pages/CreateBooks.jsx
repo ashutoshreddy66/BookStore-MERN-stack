@@ -2,7 +2,7 @@ import React from "react";
 
 const Createbook = () =>{
     return(
-        <div>Home</div>
+        <div>Create</div>
     )
 }
 
